@@ -123,13 +123,21 @@ func (this *HipChatNotifier) Notify(evalContext *alerting.EvalContext) error {
 
 	// Add a card with link to the dashboard
 	card := map[string]interface{}{
-		"style":       "link",
+		"style":       "application",
+		"format":      "medium",
 		"url":         ruleUrl,
 		"id":          "1",
 		"title":       evalContext.GetNotificationTitle(),
 		"description": evalContext.GetNotificationTitle() + " in state " + evalContext.GetStateModel().Text,
 		"icon": map[string]interface{}{
 			"url": "https://grafana.com/assets/img/fav32.png",
+		},
+		"thumbnail": map[string]interface{}{
+			"url":    evalContext.ImagePublicUrl,
+			"url@2x": evalContext.ImagePublicUrl,
+		},
+		"activity": map[string]interface{}{
+			"html": "<b>" + evalContext.GetNotificationTitle() + "</b> " + evalContext.GetStateModel().Text,
 		},
 		"date": evalContext.EndTime.Unix(),
 	}
