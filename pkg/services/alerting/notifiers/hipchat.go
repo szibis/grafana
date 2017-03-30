@@ -37,6 +37,14 @@ func init() {
           data-placement="right">
         </input>
       </div>
+      <div class="gf-form max-width-30">
+        <span class="gf-form-label width-8">Icon Url</span>
+        <input type="text placeholder="Default icon (logo) url: https://grafana.com/assets/img/fav32.png">
+          class="gf-form-input max-width-30"
+          ng-model="ctrl.model.settings.iconurl"
+          data-placement="right">
+        </input>
+      </div>
     `,
 	})
 
@@ -58,21 +66,28 @@ func NewHipChatNotifier(model *models.AlertNotification) (alerting.Notifier, err
 	apikey := model.Settings.Get("apikey").MustString()
 	roomId := model.Settings.Get("roomid").MustString()
 
+	iconUrl := model.Settings.Get("iconUrl").MustString()
+	if iconUrl == "" {
+		iconUrl = "https://grafana.com/assets/img/fav32.png"
+	}
+
 	return &HipChatNotifier{
 		NotifierBase: NewNotifierBase(model.Id, model.IsDefault, model.Name, model.Type, model.Settings),
 		Url:          url,
 		ApiKey:       apikey,
 		RoomId:       roomId,
+		IconUrl:      iconUrl,
 		log:          log.New("alerting.notifier.hipchat"),
 	}, nil
 }
 
 type HipChatNotifier struct {
 	NotifierBase
-	Url    string
-	ApiKey string
-	RoomId string
-	log    log.Logger
+	Url     string
+	ApiKey  string
+	RoomId  string
+	IconUrl string
+	log     log.Logger
 }
 
 func (this *HipChatNotifier) Notify(evalContext *alerting.EvalContext) error {
@@ -130,7 +145,7 @@ func (this *HipChatNotifier) Notify(evalContext *alerting.EvalContext) error {
 		"title":       evalContext.GetNotificationTitle(),
 		"description": evalContext.GetNotificationTitle() + " in state " + evalContext.GetStateModel().Text,
 		"icon": map[string]interface{}{
-			"url": "https://grafana.com/assets/img/fav32.png",
+			"url": this.IconUrl,
 		},
 		"thumbnail": map[string]interface{}{
 			"url":    evalContext.ImagePublicUrl,
