@@ -39,7 +39,8 @@ func init() {
       </div>
       <div class="gf-form max-width-30">
         <span class="gf-form-label width-8">Icon Url</span>
-        <input type="text placeholder="Default icon (logo) url: https://grafana.com/assets/img/fav32.png">
+        <input type="text
+	  placeholder="https://grafana.com/assets/img/fav32.png"
           class="gf-form-input max-width-30"
           ng-model="ctrl.model.settings.iconurl"
           data-placement="right">
